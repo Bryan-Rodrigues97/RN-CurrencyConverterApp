@@ -1,11 +1,39 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View, ActivityIndicator } from 'react-native';
+import { Converter } from './src/components/converter/Converter';
+import { useEffect, useState } from 'react';
+import api from './src/services/api';
+
+//https://economia.awesomeapi.com.br/json/all
 
 export default function App() {
+  const [currencyList, setCurrencyList] = useState({});
+  const [loading, setLoading] = useState(true)
+
+  useEffect(()=>{
+    async function loadCurrencyList(){
+      await api.get('/json/all')
+              .then((json)=>{
+                setCurrencyList(json.data)
+                setLoading(false)
+              })
+              .catch(()=>console.error("Erro na Requisição HTTP") )
+              .finally(()=>console.log("Saiu"))
+    }
+    
+    loadCurrencyList();
+  },[])
+
+  if(loading){
+    return(
+      <View style={{flex:1, justifyContent:'center',alignItems:'center'}}>
+        <ActivityIndicator />
+      </View>
+    ) 
+  }
+
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+      <Converter style={styles.converter} currencyList={currencyList}/>
     </View>
   );
 }
@@ -13,8 +41,8 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#646464',
     alignItems: 'center',
-    justifyContent: 'center',
-  },
+    paddingTop: 80
+  }  
 });
