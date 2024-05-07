@@ -17,7 +17,6 @@ export default function App() {
                 setLoading(false)
               })
               .catch(()=>console.error("Erro na Requisição HTTP") )
-              .finally(()=>console.log("Saiu"))
     }
     
     loadCurrencyList();
